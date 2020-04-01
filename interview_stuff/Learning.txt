@@ -1,4 +1,5 @@
 
-Github
-Neural Network Library
+Github - relearned normal stuff, need to practice branches
+Neural Network Library - Keras
 Spark
+ubuntu command line
