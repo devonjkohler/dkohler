@@ -1,0 +1,98 @@
+---
+title: "MSstats_Practice"
+author: "Devon Kohler"
+date: "April 13, 2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(MSstats)
+```
+
+## Load Data. Preprocessing is not needed
+
+
+```{r Load Data}
+input <- read.csv(file="https://raw.githubusercontent.com/MeenaChoi/MSstats_material/master/example%20dataset/SRM_CPTAC/forMSstats_Study7.csv")
+
+head(input)
+
+#raw <- SkylinetoMSstatsFormat(input)
+```
+
+## Data Process
+
+```{r process, echo=FALSE}
+QuantData <- dataProcess(input)
+head(QuantData$ProcessedData)
+```
+
+``` {r viz}
+dataProcessPlots(data=QuantData,type="ProfilePlot",address="Study7_")
+dataProcessPlots(data=QuantData,type="QCPlot",address="Study7_")
+dataProcessPlots(data=QuantData,type="ConditionPlot",address="Study7_")
+
+## Wont work for some reason
+modelBasedQCPlots(data=QuantData$ModelQC,type="ResidualPlots",address="Study7_")
+modelBasedQCPlots(data=QuantData$ModelQC,type="QQPlots",address="Study7_")
+```
+
+``` {r groupComp}
+
+levels(QuantData$ProcessedData$GROUP_ORIGINAL)
+comparison<-matrix(c(0,0,0,0,0,1,-1),nrow=1)
+row.names(comparison)<-"I-J"
+
+resultOneComparison<-groupComparison(contrast.matrix=comparison,data=QuantData)
+resultOneComparison$ComparisonResult
+
+```
+
+
+``` {r multi-comparison}
+
+# testing with more than one comparisons
+comparison1<-matrix(c(0,0,0,0,0,1,-1),nrow=1)
+comparison2<-matrix(c(0,0,0,0,1,0,-1),nrow=1)
+comparison3<-matrix(c(0,0,0,1,0,0,-1),nrow=1)
+comparison<-rbind(comparison1,comparison2,comparison3)
+row.names(comparison)<-c("I-J","H-J","G-J")
+
+resultMultiComparisons<-groupComparison(contrast.matrix=comparison,data=QuantData)
+resultMultiComparisons$ComparisonResult
+
+
+```
+
+
+
+
+
+``` {r comp plots}
+
+groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="VolcanoPlot", ylimUp=70,address="Study7_Ex1_")
+
+groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="VolcanoPlot", ylimUp=70,FCcutoff=2,ProteinName=FALSE,address="Study7_Ex2_")
+
+groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="Heatmap",address="Study7_Ex1_")
+
+groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="Heatmap",FCcutoff=2,address="Study7_Ex2_")
+
+groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="ComparisonPlot",address="Study7_")
+```
+
+
+``` {r sample size}
+
+result.sample<-designSampleSize(data=resultMultiComparisons$fittedmodel,numSample=TRUE,desiredFC=c(1.05,1.25),FDR=0.01,power=0.95)
+result.sample
+
+pdf("Study7_SampleSizePlot.pdf")
+designSampleSizePlots(data=result.sample)
+dev.off()
+
+```
+
+

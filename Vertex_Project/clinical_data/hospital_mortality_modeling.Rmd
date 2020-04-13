@@ -1,0 +1,53 @@
+---
+title: "Data Challenge for Data Science Intern Candidates"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load Data
+
+```{r load_data}
+hospital_data <- read.csv('hospital_mortality.csv')
+head(hospital_data)
+```
+
+Please include your code and results below.  Include comments and graphics where appropriate.  
+
+## How many patients have 20 or more missing feature values?
+
+```{r question_1}
+## your code here
+```
+
+## What’s the difference in means of HR_min for patients that died vs survived (not counting patients with HR_min of 0)?
+
+```{r question_2}
+## your code here
+```
+
+## What is the median maximum heart rate for patients whose maximum temperature was 2 degrees Celsius higher than their minimum temperature?
+
+```{r question_3}
+## your code here
+```
+
+## Create a plot to analyze the relationship between median temperature, outcome (died vs. survived), and age.
+
+```{r question_4a}
+## your code here
+```
+
+## Create a plot to analyze the relationship between median temperature, outcome (died vs. survived), and gender.
+
+```{r question_4b}
+## your code here
+```
+
+## Build and summarize the results of a machine learning model that predicts whether a patient dies or survives in the hospital. (We do not expect a perfect or highest-accuracy solution; this is primarily an opportunity for you to show your machine learning project workflow and to document your thought process, approach to solving problems, and interpretation of results.)
+
+```{r question_5}
+## your code here
+```
