@@ -1,0 +1,18 @@
+
+
+Admin
+
+- Proposal for acceptance into research
+- May institute suggestions
+
+Technical
+
+- Contrasts
+	- is first factor reference?
+- Fold change
+	- Is this a stats or bio thing?
+- Quantification
+
+
+- Pooling?
+	- can you differenciate between individuals or are they combined into one observation?

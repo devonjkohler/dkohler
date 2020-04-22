@@ -8,24 +8,26 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+library(tidyverse)
 library(MSstats)
 ```
 
-## Load Data. Preprocessing is not needed
+## Load Data
 
 
 ```{r Load Data}
-input <- read.csv(file="https://raw.githubusercontent.com/MeenaChoi/MSstats_material/master/example%20dataset/SRM_CPTAC/forMSstats_Study7.csv")
-
-head(input)
-
+#input <- read.csv(file="https://raw.githubusercontent.com/MeenaChoi/MSstats_material/master/example%20dataset/SRM_CPTAC/forMSstats_Study7.csv")
+#input <- load("https://github.com/MeenaChoi/MSstats/blob/master/data/DDARawData.Skyline.RData")
 #raw <- SkylinetoMSstatsFormat(input)
+
+head(SRMRawData)
+
 ```
 
-## Data Process
+## Section 1. Data Process
 
 ```{r process, echo=FALSE}
-QuantData <- dataProcess(input)
+QuantData <- dataProcess(SRMRawData)
 head(QuantData$ProcessedData)
 ```
 
@@ -34,16 +36,15 @@ dataProcessPlots(data=QuantData,type="ProfilePlot",address="Study7_")
 dataProcessPlots(data=QuantData,type="QCPlot",address="Study7_")
 dataProcessPlots(data=QuantData,type="ConditionPlot",address="Study7_")
 
-## Wont work for some reason
-modelBasedQCPlots(data=QuantData$ModelQC,type="ResidualPlots",address="Study7_")
-modelBasedQCPlots(data=QuantData$ModelQC,type="QQPlots",address="Study7_")
 ```
+
+## Section 2. Group comparison
 
 ``` {r groupComp}
 
 levels(QuantData$ProcessedData$GROUP_ORIGINAL)
-comparison<-matrix(c(0,0,0,0,0,1,-1),nrow=1)
-row.names(comparison)<-"I-J"
+comparison<-matrix(c(1,-1,0,0,0,0,0,0,0,0),nrow=1)
+row.names(comparison)<-"1-2"
 
 resultOneComparison<-groupComparison(contrast.matrix=comparison,data=QuantData)
 resultOneComparison$ComparisonResult
@@ -54,35 +55,33 @@ resultOneComparison$ComparisonResult
 ``` {r multi-comparison}
 
 # testing with more than one comparisons
-comparison1<-matrix(c(0,0,0,0,0,1,-1),nrow=1)
-comparison2<-matrix(c(0,0,0,0,1,0,-1),nrow=1)
-comparison3<-matrix(c(0,0,0,1,0,0,-1),nrow=1)
+comparison1<-matrix(c(1,-1,0,0,0,0,0,0,0,0),nrow=1)
+comparison2<-matrix(c(1,0,-1,0,0,0,0,0,0,0),nrow=1)
+comparison3<-matrix(c(1,0,0,0,0,0,0,-1,0,0),nrow=1)
 comparison<-rbind(comparison1,comparison2,comparison3)
-row.names(comparison)<-c("I-J","H-J","G-J")
+row.names(comparison)<-c("1-2","1-3","1-8")
 
 resultMultiComparisons<-groupComparison(contrast.matrix=comparison,data=QuantData)
 resultMultiComparisons$ComparisonResult
 
-
 ```
-
-
 
 
 
 ``` {r comp plots}
-
-groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="VolcanoPlot", ylimUp=70,address="Study7_Ex1_")
-
-groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="VolcanoPlot", ylimUp=70,FCcutoff=2,ProteinName=FALSE,address="Study7_Ex2_")
-
+## Group plots
+groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="VolcanoPlot",address="Study7_Ex1_")
 groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="Heatmap",address="Study7_Ex1_")
-
-groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="Heatmap",FCcutoff=2,address="Study7_Ex2_")
-
 groupComparisonPlots(data=resultMultiComparisons$ComparisonResult,type="ComparisonPlot",address="Study7_")
+
+
+## Model Assumption plots
+modelBasedQCPlots(data=resultMultiComparisons,type="ResidualPlots",address="Study7_")
+modelBasedQCPlots(data=resultMultiComparisons,type="QQPlots",address="Study7_")
+
 ```
 
+## Section 3. Sample Size
 
 ``` {r sample size}
 
@@ -95,4 +94,11 @@ dev.off()
 
 ```
 
+## Section 4. Quantification
 
+``` {r quantification}
+
+quantification(QuantData, type = 'Sample')
+quantification(QuantData, type = 'Group')
+
+```
